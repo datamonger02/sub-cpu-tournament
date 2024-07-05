@@ -61,5 +61,42 @@ def filter_data():
     return jsonify({'html': html})
 
 
+@app.route('/character_vs_character')
+def character_vs_character():
+    char1 = request.args.get('char1')
+    char2 = request.args.get('char2')
+
+    if char1 and char2:
+        # Find fights where both characters are present
+        fights = df.groupby('Fight ID').filter(
+            lambda x: set([char1, char2]) <= set(x['Character'])
+        )
+
+        # Prepare results
+        results = []
+        for _, fight in fights.groupby('Fight ID'):
+            winner = fight[fight['Winner'] == True]['Player'].values[0]
+            char1_player = fight[fight['Character'] == char1]['Player'].values[0]
+            char2_player = fight[fight['Character'] == char2]['Player'].values[0]
+            tournament = fight['Tournament'].values[0]
+            round_no = fight['Round'].values[0]
+
+            results.append({
+                'Fight ID': fight['Fight ID'].values[0],
+                f'{char1} Player': char1_player,
+                f'{char2} Player': char2_player,
+                'Winner': winner,
+                'Tournament': tournament,
+                'Round': round_no
+            })
+
+        # Convert results to HTML
+        results_df = pd.DataFrame(results)
+        html = results_df.to_html(classes='table table-striped', index=False)
+        return jsonify({'html': html})
+
+    return jsonify({'html': 'Please select two characters.'})
+
+
 if __name__ == '__main__':
     app.run(port=8000, debug=True)

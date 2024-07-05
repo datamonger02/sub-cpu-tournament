@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Filter</title>
+    <title>Sub CPU Tournament Data Filterer</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <h1>Data Filter</h1>
+    <h1>Sub CPU Tournament Data Filterer</h1>
 
     <select id="column-select">
         <!-- Options will be populated dynamically -->
@@ -15,7 +15,7 @@
 
     <div id="value-select-container" style="display: none;">
         <select id="value-select">
-            <!-- Options will be populated dynamically for Player and Character -->
+            <!-- Options will be populated dynamically for Player, Character, and Tournament -->
         </select>
     </div>
 
@@ -27,55 +27,93 @@
 
     <div id="results"></div>
 
+    <h2>Character vs Character Comparison</h2>
+    <select id="char1-select">
+        <option value="">Select Character 1</option>
+        <!-- Options will be populated dynamically -->
+    </select>
+    <select id="char2-select">
+        <option value="">Select Character 2</option>
+        <!-- Options will be populated dynamically -->
+    </select>
+    <button id="compare-button">Compare</button>
+
+    <div id="comparison-results"></div>
+
     <script>
-    $(document).ready(function() {
-        // Populate dropdown with column names
-        $.getJSON('/get_columns', function(data) {
-            var select = $('#column-select');
-            $.each(data, function(index, value) {
-                select.append($('<option></option>').attr('value', value).text(value));
-            });
-        });
-
-        // Handle column selection change
-        $('#column-select').change(function() {
-            var column = $(this).val();
-            if (['Player', 'Character', 'Tournament'].includes(column)) {
-                $('#search-container').hide();
-                $('#value-select-container').show();
-                populateValueSelect(column);
-            } else {
-                $('#search-container').show();
-                $('#value-select-container').hide();
-            }
-        });
-
-        // Populate value select for Player, Character, and Tournament
-        function populateValueSelect(column) {
-            $.getJSON('/get_unique_values', {column: column}, function(data) {
-                var select = $('#value-select');
-                select.empty();
+        $(document).ready(function() {
+            // Populate dropdown with column names
+            $.getJSON('/get_columns', function(data) {
+                var select = $('#column-select');
                 $.each(data, function(index, value) {
                     select.append($('<option></option>').attr('value', value).text(value));
                 });
             });
-        }
 
-        // Handle filter button click
-        $('#filter-button').click(function() {
-            var column = $('#column-select').val();
-            var value;
-            if (['Player', 'Character', 'Tournament'].includes(column)) {
-                value = $('#value-select').val();
-            } else {
-                value = $('#search-input').val();
+            // Handle column selection change
+            $('#column-select').change(function() {
+                var column = $(this).val();
+                if (['Player', 'Character', 'Tournament'].includes(column)) {
+                    $('#search-container').hide();
+                    $('#value-select-container').show();
+                    populateValueSelect(column);
+                } else {
+                    $('#search-container').show();
+                    $('#value-select-container').hide();
+                }
+            });
+
+            // Populate value select for Player, Character, and Tournament
+            function populateValueSelect(column) {
+                $.getJSON('/get_unique_values', {column: column}, function(data) {
+                    var select = $('#value-select');
+                    select.empty();
+                    $.each(data, function(index, value) {
+                        select.append($('<option></option>').attr('value', value).text(value));
+                    });
+                });
             }
 
-            $.getJSON('/filter', {column: column, value: value}, function(data) {
-                $('#results').html(data.html);
+            // Populate character dropdowns
+            function populateCharacterDropdowns() {
+                $.getJSON('/get_unique_values', {column: 'Character'}, function(data) {
+                    var char1Select = $('#char1-select');
+                    var char2Select = $('#char2-select');
+                    $.each(data, function(index, value) {
+                        char1Select.append($('<option></option>').attr('value', value).text(value));
+                        char2Select.append($('<option></option>').attr('value', value).text(value));
+                    });
+                });
+            }
+
+            // Call the function to populate character dropdowns
+            populateCharacterDropdowns();
+
+            // Handle filter button click
+            $('#filter-button').click(function() {
+                var column = $('#column-select').val();
+                var value;
+                if (['Player', 'Character', 'Tournament'].includes(column)) {
+                    value = $('#value-select').val();
+                } else {
+                    value = $('#search-input').val();
+                }
+
+                $.getJSON('/filter', {column: column, value: value}, function(data) {
+                    $('#results').html(data.html);
+                });
+            });
+
+            // Handle compare button click
+            $('#compare-button').click(function() {
+                var char1 = $('#char1-select').val();
+                var char2 = $('#char2-select').val();
+
+                $.getJSON('/character_vs_character', {char1: char1, char2: char2}, function(data) {
+                    $('#comparison-results').html(data.html);
+                });
             });
         });
-    });
-</script>
+    </script>
 </body>
 </html>
