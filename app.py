@@ -67,35 +67,86 @@ def character_vs_character():
     char2 = request.args.get('char2')
 
     if char1 and char2:
-        # Find fights where both characters are present
-        fights = df.groupby('Fight ID').filter(
-            lambda x: set([char1, char2]) <= set(x['Character'])
-        )
+        if char1 == char2:
+            # Find fights where this character is present on either side
+            fights = df[(df['Character 1'] == char1) | (df['Character 2'] == char1)]
 
-        # Prepare results
-        results = []
-        for _, fight in fights.groupby('Fight ID'):
-            winner = fight[fight['Winner'] == True]['Player'].values[0]
-            char1_player = fight[fight['Character'] == char1]['Player'].values[0]
-            char2_player = fight[fight['Character'] == char2]['Player'].values[0]
-            tournament = fight['Tournament'].values[0]
-            round_no = fight['Round'].values[0]
+            if fights.empty:
+                return jsonify({
+                    'summary': f"No matches found for {char1}.",
+                    'table': ''
+                })
 
-            results.append({
-                'Fight ID': fight['Fight ID'].values[0],
-                f'{char1} Player': char1_player,
-                f'{char2} Player': char2_player,
-                'Winner': winner,
-                'Tournament': tournament,
-                'Round': round_no
-            })
+            # Prepare results
+            results = []
+            for _, fight in fights.iterrows():
+                results.append({
+                    'Fight ID': fight['Fight ID'],
+                    f'{char1} Player 1': fight['Player 1'],
+                    f'{char1} Player 2': fight['Player 2'],
+                    'Winner': fight['Winner'],
+                    'Tournament': fight['Tournament No.'],
+                    'Round': fight['Round No.']
+                })
 
-        # Convert results to HTML
-        results_df = pd.DataFrame(results)
-        html = results_df.to_html(classes='table table-striped', index=False)
-        return jsonify({'html': html})
+            total_fights = len(results)
 
-    return jsonify({'html': 'Please select two characters.'})
+            # Convert results to HTML
+            results_df = pd.DataFrame(results)
+            table_html = results_df.to_html(classes='table table-striped', index=False)
+
+            summary_html = f"<p>Total {char1} vs {char1} matches: {total_fights}</p>"
+
+            return jsonify({'summary': summary_html, 'table': table_html})
+
+        else:
+            # Find fights where both characters are present
+            fights = df[((df['Character 1'] == char1) & (df['Character 2'] == char2)) |
+                        ((df['Character 1'] == char2) & (df['Character 2'] == char1))]
+
+            if fights.empty:
+                return jsonify({
+                    'summary': f"No matches found between {char1} and {char2}.",
+                    'table': ''
+                })
+
+            # Prepare results
+            results = []
+            char1_wins = 0
+            total_fights = 0
+            for _, fight in fights.iterrows():
+                total_fights += 1
+                if (fight['Character 1'] == char1 and fight['Winner'] == fight['Player 1']) or \
+                        (fight['Character 2'] == char1 and fight['Winner'] == fight['Player 2']):
+                    char1_wins += 1
+
+                results.append({
+                    'Fight ID': fight['Fight ID'],
+                    f'{char1} Player': fight['Player 1'] if fight['Character 1'] == char1 else fight['Player 2'],
+                    f'{char2} Player': fight['Player 2'] if fight['Character 1'] == char1 else fight['Player 1'],
+                    'Winner': fight['Winner'],
+                    'Tournament': fight['Tournament No.'],
+                    'Round': fight['Round No.']
+                })
+
+            # Calculate win percentages
+            char1_win_percent = (char1_wins / total_fights) * 100
+            char2_win_percent = 100 - char1_win_percent
+
+            # Convert results to HTML
+            results_df = pd.DataFrame(results)
+            table_html = results_df.to_html(classes='table table-striped', index=False)
+
+            summary_html = f"<p>{char1} has won this matchup {char1_win_percent:.1f}% of the time</p>"
+            summary_html += f"<p>{char2} has won this matchup {char2_win_percent:.1f}% of the time</p>"
+            summary_html += f"<p>Total matches: {total_fights}</p>"
+
+            return jsonify({'summary': summary_html, 'table': table_html})
+
+    return jsonify({
+        'summary': 'Please select two characters.',
+        'table': ''
+    })
 
 
 if __name__ == '__main__':

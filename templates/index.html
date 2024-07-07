@@ -3,42 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sub CPU Tournament Data Filterer</title>
+    <title>Data Filter</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .filter-section {
+            width: 45%;
+        }
+        select, input, button {
+            margin: 5px 0;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-    <h1>Sub CPU Tournament Data Filterer</h1>
+    <h1>Data Filter</h1>
 
-    <select id="column-select">
-        <!-- Options will be populated dynamically -->
-    </select>
+    <div class="container">
+        <div class="filter-section">
+            <h2>General Filter</h2>
+            <select id="column-select">
+                <!-- Options will be populated dynamically -->
+            </select>
 
-    <div id="value-select-container" style="display: none;">
-        <select id="value-select">
-            <!-- Options will be populated dynamically for Player, Character, and Tournament -->
-        </select>
+            <div id="value-select-container" style="display: none;">
+                <select id="value-select">
+                    <!-- Options will be populated dynamically for Player, Character, and Tournament -->
+                </select>
+            </div>
+
+            <div id="search-container">
+                <input type="text" id="search-input" placeholder="Search...">
+            </div>
+
+            <button id="filter-button">Filter</button>
+
+            <div id="results"></div>
+        </div>
+
+        <div class="filter-section">
+            <h2>Character vs Character Comparison</h2>
+            <select id="char1-select">
+                <option value="">Select Character 1</option>
+                <!-- Options will be populated dynamically -->
+            </select>
+            <select id="char2-select">
+                <option value="">Select Character 2</option>
+                <!-- Options will be populated dynamically -->
+            </select>
+            <button id="compare-button">Compare</button>
+
+            <div id="comparison-results">
+                <div id="comparison-summary"></div>
+                <div id="comparison-table"></div>
+            </div>
+        </div>
     </div>
-
-    <div id="search-container">
-        <input type="text" id="search-input" placeholder="Search...">
-    </div>
-
-    <button id="filter-button">Filter</button>
-
-    <div id="results"></div>
-
-    <h2>Character vs Character Comparison</h2>
-    <select id="char1-select">
-        <option value="">Select Character 1</option>
-        <!-- Options will be populated dynamically -->
-    </select>
-    <select id="char2-select">
-        <option value="">Select Character 2</option>
-        <!-- Options will be populated dynamically -->
-    </select>
-    <button id="compare-button">Compare</button>
-
-    <div id="comparison-results"></div>
 
     <script>
         $(document).ready(function() {
@@ -109,8 +132,17 @@
                 var char1 = $('#char1-select').val();
                 var char2 = $('#char2-select').val();
 
+                if (!char1 || !char2) {
+                    $('#comparison-results').html('<p>Please select two characters.</p>');
+                    return;
+                }
+
                 $.getJSON('/character_vs_character', {char1: char1, char2: char2}, function(data) {
-                    $('#comparison-results').html(data.html);
+                    if (data.table) {
+                        $('#comparison-results').html(data.summary + data.table);
+                    } else {
+                        $('#comparison-results').html('<p>' + data.summary + '</p');
+                    }
                 });
             });
         });

@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="207bcb67-07d7-4555-a643-8c6cb9902171" name="Changes" comment="Basic functionality">
+    <list default="true" id="207bcb67-07d7-4555-a643-8c6cb9902171" name="Changes" comment="Added Character vs Character history function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
@@ -180,7 +180,7 @@
       <workItem from="1718932112329" duration="315000" />
       <workItem from="1718932701150" duration="26000" />
       <workItem from="1718932738068" duration="5855000" />
-      <workItem from="1720054090858" duration="8122000" />
+      <workItem from="1720054090858" duration="10646000" />
     </task>
     <task id="LOCAL-00001" summary="Basic functionality">
       <option name="closed" value="true" />
@@ -190,7 +190,15 @@
       <option name="project" value="LOCAL" />
       <updated>1720057544454</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Added Character vs Character history function">
+      <option name="closed" value="true" />
+      <created>1720223422464</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1720223422464</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -198,10 +206,11 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Basic functionality" />
-    <option name="LAST_COMMIT_MESSAGE" value="Basic functionality" />
+    <MESSAGE value="Added Character vs Character history function" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Character vs Character history function" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/sub_cpu_tournament$app.coverage" NAME="app Coverage Results" MODIFIED="1720223123503" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/sub_cpu_tournament$app.coverage" NAME="app Coverage Results" MODIFIED="1720228018131" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/sub_cpu_tournament$sub_cpu_tournament.coverage" NAME="sub-cpu-tournament Coverage Results" MODIFIED="1718931313394" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/sub_cpu_tournament$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1718932749943" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
